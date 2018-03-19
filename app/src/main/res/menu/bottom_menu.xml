@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menuItemTower"
+        android:icon="@drawable/ic_network_cell_black_24dp"
+        android:title="Tower" />
+    <item
+        android:id="@+id/menuItemSpeed"
+        android:icon="@drawable/ic_network_check_black_24dp"
+        android:title="Item" />
+    <item
+        android:id="@+id/menuItemHome"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Item" />
+    <item
+        android:id="@+id/menuItemData"
+        android:icon="@drawable/ic_swap_vert_black_24dp"
+        android:title="Coverage" />
+    <item
+        android:id="@+id/menuItemAnalytics"
+        android:icon="@drawable/ic_trending_up_black_24dp"
+        android:title="Analytics" />
+</menu>
