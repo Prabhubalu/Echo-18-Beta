@@ -5,7 +5,8 @@
     <item
         android:id="@+id/menuItemTower"
         android:icon="@drawable/ic_network_cell_black_24dp"
-        android:title="Tower" />
+        android:title="Tower"
+        />
     <item
         android:id="@+id/menuItemSpeed"
         android:icon="@drawable/ic_network_check_black_24dp"

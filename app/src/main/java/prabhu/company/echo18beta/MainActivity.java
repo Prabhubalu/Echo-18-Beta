@@ -33,13 +33,13 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.beginTransaction().replace(R.id.mainFrameLayout, new HomeFragment()).commit();
 
         spaceNavigationView.initWithSaveInstanceState(savedInstanceState);
-        spaceNavigationView.addSpaceItem(new SpaceItem("Tower", R.drawable.ic_network_cell_black_24dp));
-        spaceNavigationView.addSpaceItem(new SpaceItem("Speed", R.drawable.ic_network_check_black_24dp));
-        spaceNavigationView.addSpaceItem(new SpaceItem("Coverage", R.drawable.ic_swap_vert_black_24dp));
-        spaceNavigationView.addSpaceItem(new SpaceItem("Analytics", R.drawable.ic_trending_up_black_24dp));
+        spaceNavigationView.addSpaceItem(new SpaceItem("", R.drawable.ic_network_cell_black_24dp));
+        spaceNavigationView.addSpaceItem(new SpaceItem("", R.drawable.ic_network_check_black_24dp));
+        spaceNavigationView.addSpaceItem(new SpaceItem("", R.drawable.ic_swap_vert_black_24dp));
+        spaceNavigationView.addSpaceItem(new SpaceItem("", R.drawable.ic_trending_up_black_24dp));
 
         spaceNavigationView.setCentreButtonIcon(R.drawable.ic_home_black_24dp);
-        spaceNavigationView.setCentreButtonColor(ContextCompat.getColor(getApplicationContext(), R.color.colorTextDark));
+        spaceNavigationView.setCentreButtonColor(ContextCompat.getColor(getApplicationContext(), R.color.colorCenter));
         spaceNavigationView.setCentreButtonRippleColor(R.color.colorAccent);
         spaceNavigationView.setActiveCentreButtonBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
         spaceNavigationView.setActiveCentreButtonIconColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
@@ -53,29 +53,32 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(int itemIndex, String itemName) {
-                Fragment fragment;
-                switch (itemIndex) {
-                    case 0:
-                        fragment = new TowerFragment();
-                        break;
-                    case 1:
-                        fragment = new SpeedFragment();
-                        break;
-                    case 2:
-                        fragment = new CoverageFragment();
-                        break;
-                    default:
-                        fragment = new AnalyticsFragment();
-                        break;
-                }
-                fragmentManager.beginTransaction().replace(R.id.mainFrameLayout, fragment).commit();
+                setupIndex(itemIndex);
             }
 
             @Override
             public void onItemReselected(int itemIndex, String itemName) {
-
+                setupIndex(itemIndex);
             }
         });
+    }
 
+    private void setupIndex(int itemIndex) {
+        Fragment fragment;
+        switch (itemIndex) {
+            case 0:
+                fragment = new TowerFragment();
+                break;
+            case 1:
+                fragment = new SpeedFragment();
+                break;
+            case 2:
+                fragment = new CoverageFragment();
+                break;
+            default:
+                fragment = new AnalyticsFragment();
+                break;
+        }
+        fragmentManager.beginTransaction().replace(R.id.mainFrameLayout, fragment).commit();
     }
 }

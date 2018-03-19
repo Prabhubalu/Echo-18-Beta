@@ -2,23 +2,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     android:orientation="vertical"
+    android:background="#000000"
     tools:context="prabhu.company.echo18beta.HomeFragment">
 
     <TextView
         android:text="Home"
         android:textSize="40sp"
-        android:textColor="@color/colorTextDark"
+        android:textColor="#FFFFFF"
         android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <TextView
         android:textSize="16sp"
+        android:textColor="#FFFFFF"
         android:fontFamily="sans-serif-light"
         android:text="Make yourself home :)"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <pl.droidsonroids.gif.GifTextView
+        android:layout_marginTop="120dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:background="@drawable/meters"
+        />
+
+    <com.mikhaellopez.circularfillableloaders.CircularFillableLoaders
+        android:id="@+id/circularFillableLoaders"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-225dp"
+        android:layout_marginRight="-2dp"
+        android:src="@drawable/tower"
+        app:cfl_border="true"
+        app:cfl_border_width="4dp"
+        app:cfl_progress="80"
+        app:cfl_wave_amplitude="0.06"
+        app:cfl_wave_color="#20C20E" />
 
 </LinearLayout>
