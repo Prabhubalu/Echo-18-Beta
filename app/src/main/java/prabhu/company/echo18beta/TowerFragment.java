@@ -1,6 +1,7 @@
 package prabhu.company.echo18beta;
 
 import android.app.ProgressDialog;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -209,6 +211,9 @@ public class TowerFragment extends Fragment {
                             marker.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                             googleMap.addMarker(marker);
 
+                            googleMap.setMapStyle(
+                                    MapStyleOptions.loadRawResourceStyle(
+                                            getActivity(), R.raw.map));
 
                             // For zooming automatically to the location of the marker
                             CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(17).build();
