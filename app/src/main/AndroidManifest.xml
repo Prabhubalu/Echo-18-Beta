@@ -28,7 +28,6 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.Fullscreen" />
-        <activity android:name=".MapsActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -41,6 +40,21 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <service
+            android:name=".Libraries.BGService"
+            android:enabled="true" />
+
+
+
+        <receiver
+            android:name=".Libraries.SensorRestarterBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+            <intent-filter>
+                <action android:name="uk.ac.shef.oak.ActivityRecognition.RestartSensor" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

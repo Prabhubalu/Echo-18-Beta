@@ -1,5 +1,4 @@
 package prabhu.company.echo18beta.Libraries;
-
 import android.Manifest;
 import android.app.Service;
 import android.content.Context;
@@ -82,6 +81,7 @@ public class BGService extends Service {
         stoptimertask();
     }
 
+    boolean test=false;
     private Timer timer;
     private TimerTask timerTask;
     long oldTime = 0;
@@ -90,7 +90,7 @@ public class BGService extends Service {
 
         prefs= getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
         //  int period = prefs.getInt("runtime",10*60000);
-        period = prefs.getInt("runtime",20000);
+        period = prefs.getInt("runtime",60000);
 
         //set a new Timer
         timer = new Timer();
@@ -116,16 +116,17 @@ public class BGService extends Service {
         prefs= getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
 
 
-        new SpeedTestTask().execute();
+        if(!test)
+            new SpeedTestTask().execute();
 
         timerTask = new TimerTask() {
             public void run() {
-                period = prefs.getInt("runtime",5000);
+                period = prefs.getInt("runtime",60000);
 
                 //period=10000;
                 Log.e("Counter","---> "+(counter++));
 
-                if(counter%20==0)
+                if(counter%30==0&&!test)
                     new SpeedTestTask().execute();
 
                 SharedPreferences prefs= getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
@@ -276,7 +277,8 @@ public class BGService extends Service {
                                             DatabaseReference fireDB = FirebaseDatabase.getInstance().getReference().child("Signals");
                                             String push_id = fireDB.push().getKey();
 
-                                            fireDB.child(push_id).setValue(messageMap);
+                                            if(!test)
+                                                fireDB.child(push_id).setValue(messageMap);
                                             Log.i("MY IN TIMER","Pushed man");
 
                                             timerover=true;

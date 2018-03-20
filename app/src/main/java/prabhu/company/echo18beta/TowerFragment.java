@@ -45,6 +45,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import prabhu.company.echo18beta.misc.Cell;
 import prabhu.company.echo18beta.misc.CellMain;
@@ -137,7 +138,11 @@ public class TowerFragment extends Fragment {
     double lat, longi;
     JSONObject jo2;
 
+    String tokens[]={"9226357cb8dac2","96983ae6ba78d0","904d9acad7f279"};
+
     public void displayInMap() {
+        Random rand=new Random();
+
         String url = "https://ap1.unwiredlabs.com/v2/process.php";
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
@@ -148,7 +153,7 @@ public class TowerFragment extends Fragment {
         cellmain.setMcc(mcc);
         cellmain.setMnc(mnc);
         cellmain.setRadio("gsm");
-        cellmain.setToken("9226357cb8dac2");
+        cellmain.setToken(tokens[(rand.nextInt(2))]);
         cellmain.setAddress(1);
         cellmain.setId(918210281);
 
@@ -223,10 +228,9 @@ public class TowerFragment extends Fragment {
                     progress.dismiss();
 
                 } catch (Exception e) {
-                    Toast.makeText(getActivity(), "idiot", Toast.LENGTH_SHORT).show();
-                    Log.e("meesponse ", "idiot: " + e.toString());
+                    Toast.makeText(getActivity(),"Error retrieving data",Toast.LENGTH_SHORT).show();
                 }
-                Log.e("Volley:Response ", "" + response.toString());
+               Log.e("Volley:Response ", "" + response.toString());
             }
         }, new Response.ErrorListener() {
             @Override

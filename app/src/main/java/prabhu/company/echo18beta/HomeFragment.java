@@ -18,6 +18,8 @@ import android.telephony.CellInfo;
 import android.telephony.CellInfoLte;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
@@ -109,6 +111,7 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+
         NetworkType = view.findViewById(R.id.type);
         Dbm = view.findViewById(R.id.dbm);
         Asu = view.findViewById(R.id.asu);
@@ -116,16 +119,9 @@ public class HomeFragment extends Fragment {
         circularFillableLoaders = view.findViewById(R.id.circularFillableLoaders);
 
         messageMap = new HashMap();
-        prefs= getActivity().getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
+        prefs = getActivity().getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
         editor = prefs.edit();
 
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_STATE)
-                != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-
-        } else {
 
             all = true;
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -165,20 +161,20 @@ public class HomeFragment extends Fragment {
                 getActivity().startService(mServiceIntent);
             }
 
+            String TAG = "MAIN";
+            List<SubscriptionInfo> subscriptionInfos = SubscriptionManager.from(getActivity()).getActiveSubscriptionInfoList();
+            for (int i = 0; i < subscriptionInfos.size(); i++) {
+                SubscriptionInfo lsuSubscriptionInfo = subscriptionInfos.get(i);
+                Log.d(TAG, "getNumber " + lsuSubscriptionInfo.getNumber());
+                Log.d(TAG, "mnc " + lsuSubscriptionInfo.getMnc());
+                Log.d(TAG, "cellid " + lsuSubscriptionInfo.getMcc());
+                Log.d(TAG, "mcc " + lsuSubscriptionInfo.getIccId());
+                Log.d(TAG, "network name : " + lsuSubscriptionInfo.getCarrierName());
+                Log.d(TAG, "getCountryIso " + lsuSubscriptionInfo.getCountryIso());
+            }
 
-//        currentSignalView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                getActivity().stopService(new Intent(getActivity(), BGService.class));
-//                SharedPreferences prefs = getActivity().getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
-//                SharedPreferences.Editor editor = prefs.edit();
-//                editor.putBoolean("run", false);
-//                editor.apply();
-//                Toast.makeText(getActivity(), "Stopped service", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-        }
-            return view;
+
+        return view;
 
     }
 
@@ -194,7 +190,6 @@ public class HomeFragment extends Fragment {
     }
 
 
-
     class PhoneCustomStateListener extends PhoneStateListener {
         public static final int INVALID = Integer.MAX_VALUE;
 
@@ -204,75 +199,72 @@ public class HomeFragment extends Fragment {
         @Override
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
             super.onSignalStrengthsChanged(signalStrength);
-           //try            {
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-                messageMap.put("deviceID", Tel.getDeviceId());
+            try            {
+            messageMap.put("deviceID", Tel.getDeviceId());
 
-                TextView Carriertxt = (TextView) getActivity().findViewById(R.id.carrier);
-                Carriertxt.setText(carrierName.toString());
+            TextView Carriertxt = (TextView) getActivity().findViewById(R.id.carrier);
+            Carriertxt.setText(carrierName.toString());
 
-                List<CellInfo> cellInfoList = Tel.getAllCellInfo();
-                for (CellInfo cellInfo : cellInfoList) {
-                    if (cellInfo instanceof CellInfoLte) {
-                        // cast to CellInfoLte and call all the CellInfoLte methods you need
+            List<CellInfo> cellInfoList = Tel.getAllCellInfo();
+            for (CellInfo cellInfo : cellInfoList) {
+                if (cellInfo instanceof CellInfoLte) {
+                    // cast to CellInfoLte and call all the CellInfoLte methods you need
 
-                        messageMap.put("TestDBM", ((CellInfoLte) cellInfo).getCellSignalStrength().getDbm());
-                        messageMap.put("RSRQ", ((CellInfoLte) cellInfo).getCellSignalStrength().getLevel());
-                        messageMap.put("TAC", ((CellInfoLte) cellInfo).getCellSignalStrength().getTimingAdvance());
+                    messageMap.put("TestDBM", ((CellInfoLte) cellInfo).getCellSignalStrength().getDbm());
+                    messageMap.put("RSRQ", ((CellInfoLte) cellInfo).getCellSignalStrength().getLevel());
+                    messageMap.put("TAC", ((CellInfoLte) cellInfo).getCellSignalStrength().getTimingAdvance());
 
-                        if (Build.VERSION.SDK_INT > 25) {
-                            messageMap.put("CQI", ((CellInfoLte) cellInfo).getCellSignalStrength().getCqi());
-                            messageMap.put("RSRQ", ((CellInfoLte) cellInfo).getCellSignalStrength().getRsrq());
-                            messageMap.put("RSSNR", ((CellInfoLte) cellInfo).getCellSignalStrength().getRssnr());
-                        }
+                    if (Build.VERSION.SDK_INT > 25) {
+                        messageMap.put("CQI", ((CellInfoLte) cellInfo).getCellSignalStrength().getCqi());
+                        messageMap.put("RSRQ", ((CellInfoLte) cellInfo).getCellSignalStrength().getRsrq());
+                        messageMap.put("RSSNR", ((CellInfoLte) cellInfo).getCellSignalStrength().getRssnr());
                     }
                 }
+            }
 
-                signalStrengthDbm = getSignalStrengthByName(signalStrength, "getDbm");
-
-
-                signalStrengthAsuLevel = getSignalStrengthByName(signalStrength, "getAsuLevel");
-
-                if (signalStrength.isGsm()) {
-                    where = 1;
-                } else {
-                    where = 2;
-                    signalStrengthValue = signalStrength.getCdmaDbm();
-                }
+            signalStrengthDbm = getSignalStrengthByName(signalStrength, "getDbm");
 
 
-                String ssignal = signalStrength.toString();
+            signalStrengthAsuLevel = getSignalStrengthByName(signalStrength, "getAsuLevel");
 
-                String[] parts = ssignal.split(" ");
-                int dbm = 0;
+            if (signalStrength.isGsm()) {
+                where = 1;
+            } else {
+                where = 2;
+                signalStrengthValue = signalStrength.getCdmaDbm();
+            }
 
-                carrierNetwork = getNetworkClass(getActivity());
 
-                GsmCellLocation cellLocation = (GsmCellLocation) Tel.getCellLocation();
-                carriercid = cellLocation.getCid();
-                carrierlang = cellLocation.getLac() & 0xffff;
-                String networkOperator = Tel.getNetworkOperator();
-                if (!TextUtils.isEmpty(networkOperator)) {
-                    mcc = Integer.parseInt(networkOperator.substring(0, 3));
-                    mnc = Integer.parseInt(networkOperator.substring(3));
-                }
+            String ssignal = signalStrength.toString();
 
-                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-                fusedLocationProviderClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            mlat = location.getLatitude();
-                            mlang = location.getLongitude();
-                        }
+            String[] parts = ssignal.split(" ");
+            int dbm = 0;
+
+            carrierNetwork = getNetworkClass(getActivity());
+
+            GsmCellLocation cellLocation = (GsmCellLocation) Tel.getCellLocation();
+            carriercid = cellLocation.getCid();
+            carrierlang = cellLocation.getLac() & 0xffff;
+            String networkOperator = Tel.getNetworkOperator();
+            if (!TextUtils.isEmpty(networkOperator)) {
+                mcc = Integer.parseInt(networkOperator.substring(0, 3));
+                mnc = Integer.parseInt(networkOperator.substring(3));
+            }
+
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        mlat = location.getLatitude();
+                        mlang = location.getLongitude();
                     }
-                });
+                }
+            });
 
-                //String tempCarrierName = carrierName.substring(0,1).toUpperCase()+carrierName.substring(1);
+            //String tempCarrierName = carrierName.substring(0,1).toUpperCase()+carrierName.substring(1);
 
-                NetworkType.setText(carrierNetwork);
+            NetworkType.setText(carrierNetwork);
 
 
 //                currentSignalView.setText("Carrier: " + carrierName +
@@ -289,33 +281,39 @@ public class HomeFragment extends Fragment {
 //                        // + "\nMyLongitute: " + mlang
 //                );
 
-                type.setText(carrierNetwork);
-                Dbm.setText("DBM : "+signalStrengthDbm);
-                Asu.setText("ASU : "+signalStrengthAsuLevel);
+            type.setText(carrierNetwork);
+            Dbm.setText("DBM : " + signalStrengthDbm);
+            Asu.setText("ASU : " + signalStrengthAsuLevel);
 
 
-                circularFillableLoaders.setProgress((int)(((float)signalStrengthAsuLevel/39)*100));
+            circularFillableLoaders.setProgress((int) (((float) signalStrengthAsuLevel / 39) * 100));
 
-                messageMap.put("Carrier", carrierName);
-                messageMap.put("DBM", signalStrengthDbm);
-                messageMap.put("ASU", signalStrengthAsuLevel);
-                messageMap.put("NetworkType", carrierNetwork);
-                messageMap.put("CellTowerType", carrierConnenctionType);
-                messageMap.put("CellId", carriercid);
-                messageMap.put("LAC", carrierlang);
-                messageMap.put("MCC", mcc);
-                messageMap.put("MNC", mnc);
-                messageMap.put("MyLatitude", mlat);
-                messageMap.put("MyLongitude", mlang);
-                messageMap.put("Time", ServerValue.TIMESTAMP);
+            messageMap.put("Carrier", carrierName);
+            messageMap.put("DBM", signalStrengthDbm);
+            messageMap.put("ASU", signalStrengthAsuLevel);
+            messageMap.put("NetworkType", carrierNetwork);
+            messageMap.put("CellTowerType", carrierConnenctionType);
+            messageMap.put("CellId", carriercid);
+            messageMap.put("LAC", carrierlang);
+            messageMap.put("MCC", mcc);
+            messageMap.put("MNC", mnc);
+            messageMap.put("MyLatitude", mlat);
+            messageMap.put("MyLongitude", mlang);
+            messageMap.put("Time", ServerValue.TIMESTAMP);
 
-                DatabaseReference fireDB = FirebaseDatabase.getInstance().getReference().child("TEST_FOR_SHRAVAN_NEVER_CHECK_OR_REFER_THIS_GET_IT_OR_YOU_WILL_DIE").child("Main");
+           // DatabaseReference fireDB = FirebaseDatabase.getInstance().getReference().child("TEST_FOR_SHRAVAN_NEVER_CHECK_OR_REFER_THIS_GET_IT_OR_YOU_WILL_DIE").child("Main");
 
-                String push_id = fireDB.push().getKey();
-                //  fireDB.child(push_id).setValue(messageMap);
-                messageMap.clear();
-                //Toast.makeText(getApplicationContext(),"Updated in firebase",Toast.LENGTH_SHORT).show();
-         //   } catch (Exception e) {                Log.e("Error", "Error on displayMain " + e.toString())}
+            //String push_id = fireDB.push().getKey();
+            //  fireDB.child(push_id).setValue(messageMap);
+            messageMap.clear();
+            //Toast.makeText(getApplicationContext(),"Updated in firebase",Toast.LENGTH_SHORT).show();
+               } catch (Exception e) {                Log.e("Error", "Error on displayMain " + e.toString());
+               try{
+
+                   Tel.listen(MyListener, PhoneStateListener.LISTEN_NONE);
+               }
+               catch (Exception ignore){}
+            }
         }
     }
 
@@ -413,5 +411,4 @@ public class HomeFragment extends Fragment {
         }
         super.onDestroy();
     }
-
 }

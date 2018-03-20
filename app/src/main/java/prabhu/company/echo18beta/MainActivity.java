@@ -1,5 +1,7 @@
 package prabhu.company.echo18beta;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -11,10 +13,16 @@ import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceNavigationView;
 import com.luseen.spacenavigation.SpaceOnClickListener;
 
+import prabhu.company.echo18beta.Libraries.BGService;
+
 public class MainActivity extends AppCompatActivity {
 
     private SpaceNavigationView spaceNavigationView;
     private android.support.v4.app.FragmentManager fragmentManager;
+
+    SharedPreferences prefs;
+    SharedPreferences.Editor editor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +69,20 @@ public class MainActivity extends AppCompatActivity {
                 setupIndex(itemIndex);
             }
         });
+
+        startService();
+
     }
 
+    private void startService()
+    {
+        prefs= getSharedPreferences("hj.bs.inc.MyService", MODE_PRIVATE);
+        editor = prefs.edit();
+        editor.putBoolean("run", true);
+        editor.apply();
+
+        startService(new Intent(MainActivity.this, BGService.class));
+    }
     private void setupIndex(int itemIndex) {
         Fragment fragment;
         switch (itemIndex) {
