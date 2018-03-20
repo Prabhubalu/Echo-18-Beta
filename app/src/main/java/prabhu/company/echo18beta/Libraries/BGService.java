@@ -126,6 +126,7 @@ public class BGService extends Service {
                 //period=10000;
                 Log.e("Counter","---> "+(counter++));
 
+
                 if(counter%30==0&&!test)
                     new SpeedTestTask().execute();
 
