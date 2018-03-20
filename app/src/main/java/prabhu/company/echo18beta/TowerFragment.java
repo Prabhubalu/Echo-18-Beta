@@ -57,6 +57,7 @@ public class TowerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     MapView mMapView;
@@ -65,6 +66,7 @@ public class TowerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_tower, container, false);
 
         // For showing a move to my location button

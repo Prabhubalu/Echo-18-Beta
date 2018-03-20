@@ -204,8 +204,7 @@ public class HomeFragment extends Fragment {
         @Override
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
             super.onSignalStrengthsChanged(signalStrength);
-            Log.e("TAG","yo mams");
-            //try            {
+           //try            {
                 if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
@@ -232,7 +231,6 @@ public class HomeFragment extends Fragment {
                 }
 
                 signalStrengthDbm = getSignalStrengthByName(signalStrength, "getDbm");
-                //speedView.speedTo(Math.abs(signalStrengthDbm));
 
 
                 signalStrengthAsuLevel = getSignalStrengthByName(signalStrength, "getAsuLevel");
@@ -272,7 +270,7 @@ public class HomeFragment extends Fragment {
                     }
                 });
 
-                // String tempCarrierName = carrierName.substring(0,1).toUpperCase()+carrierName.substring(1);
+                //String tempCarrierName = carrierName.substring(0,1).toUpperCase()+carrierName.substring(1);
 
                 NetworkType.setText(carrierNetwork);
 
