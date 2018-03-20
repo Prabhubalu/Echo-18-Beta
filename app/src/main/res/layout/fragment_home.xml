@@ -77,6 +77,7 @@
 
 
     <TextView
+        android:id="@+id/carrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Carrier"
@@ -87,6 +88,7 @@
         android:textAlignment="center"/>
 
     <TextView
+        android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_gravity="right"
@@ -94,7 +96,7 @@
         android:elevation="10dp"
         android:text="NG"
         android:textColor="#FFFFFF"
-        android:textSize="20sp" />
+        android:textSize="18sp" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -120,6 +122,28 @@
         android:layout_marginLeft="35dp"
         android:layout_marginTop="10dp"/>
 
+    <TextView
+        android:id="@+id/dbm"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:text="DBM : "
+        android:textColor="#FFFFFF"
+        android:layout_gravity="right"
+        android:layout_marginTop="-25dp"/>
 
+    <TextView
+        android:id="@+id/asu"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:text="ASU : "
+        android:textColor="#FFFFFF"
+        android:layout_gravity="right"
+        />
 
+    <Button
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="right"
+        android:layout_marginTop="-500dp"
+        android:background="@drawable/ic_settings_white_24dp"/>
 </LinearLayout>

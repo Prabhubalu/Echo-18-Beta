@@ -40,13 +40,15 @@ public class SplashActivity extends AppCompatActivity {
         lottieAnimationView.addAnimatorListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                      finish();
 
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                finish();
+          //      startActivity(new Intent(SplashActivity.this, MainActivity.class));
+          //      finish();
             }
 
             @Override
