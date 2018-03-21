@@ -47,7 +47,6 @@
         android:src="@drawable/tower"
         app:cfl_border="true"
         app:cfl_border_width="4dp"
-        app:cfl_progress="80"
         app:cfl_wave_amplitude="0.06"
         app:cfl_wave_color="#20C20E" />
 
@@ -107,6 +106,7 @@
         android:layout_marginTop="-20dp"/>
 
     <ImageView
+        android:id="@+id/symbol"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@drawable/correct"
@@ -115,6 +115,7 @@
         />
 
     <TextView
+        android:id="@+id/feedback"
         android:layout_width="50dp"
         android:layout_height="20dp"
         android:text="GOOD"

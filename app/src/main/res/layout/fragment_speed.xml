@@ -20,8 +20,30 @@
         android:textSize="16sp"
         android:textColor="#FFFFFF"
         android:fontFamily="sans-serif-light"
-        android:text="Blah Blah :)"
+        android:text="Check your Internet Speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <com.github.anastr.speedviewlib.PointerSpeedometer
+        android:layout_marginTop="20dp"
+        android:id="@+id/meter"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:sv_backgroundCircleColor="@color/dark"
+        app:sv_indicator="NeedleIndicator"
+        app:sv_indicatorColor="@color/colorPrimary"
+        app:sv_markColor="@color/colorPrimary"
+        app:sv_textColor="@color/dark"
+        app:sv_unit=" Mbps" />
+    <Button
+        android:id="@+id/speedbutton"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Test"
+        android:textColor="@color/colorPrimary"
+        android:background="@drawable/button_background"/>
 
 </LinearLayout>
