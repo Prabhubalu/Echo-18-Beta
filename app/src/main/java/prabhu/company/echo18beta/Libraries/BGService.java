@@ -260,6 +260,11 @@ public class BGService extends Service {
                                             {
                                                 //eror
                                             }
+
+                                            DatabaseReference firepush = FirebaseDatabase.getInstance().getReference().child("Carrier").child(carrierName).child(carrierNetwork);
+                                            String push_id2= firepush.push().getKey();
+
+
                                             messageMap.put("Carrier", carrierName);
                                             messageMap.put("DBM", signalStrengthDbm);
                                             messageMap.put("ASU", signalStrengthAsuLevel);
@@ -277,6 +282,8 @@ public class BGService extends Service {
 
                                             DatabaseReference fireDB = FirebaseDatabase.getInstance().getReference().child("Signals");
                                             String push_id = fireDB.push().getKey();
+
+                                            firepush.child(push_id2).setValue(messageMap);
 
                                             if(!test)
                                                 fireDB.child(push_id).setValue(messageMap);

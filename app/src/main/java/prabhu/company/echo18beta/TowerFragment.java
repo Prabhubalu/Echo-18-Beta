@@ -2,6 +2,12 @@ package prabhu.company.echo18beta;
 
 import android.app.ProgressDialog;
 import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Point;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
@@ -26,16 +32,22 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -136,12 +148,26 @@ public class TowerFragment extends Fragment {
     }
 
     double lat, longi;
-    JSONObject jo2;
 
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    JSONObject jo2;
+    double mlat=0,mlang=0;
     String tokens[]={"9226357cb8dac2","96983ae6ba78d0","904d9acad7f279"};
 
     public void displayInMap() {
         Random rand=new Random();
+
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    mlat = location.getLatitude();
+                    mlang = location.getLongitude();
+                }
+            }
+        });
 
         String url = "https://ap1.unwiredlabs.com/v2/process.php";
 
@@ -212,6 +238,7 @@ public class TowerFragment extends Fragment {
                             Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
 
 
+
                             MarkerOptions marker = new MarkerOptions().position(sydney).title("Cell tower");
                             marker.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                             googleMap.addMarker(marker);
@@ -219,6 +246,11 @@ public class TowerFragment extends Fragment {
                             googleMap.setMapStyle(
                                     MapStyleOptions.loadRawResourceStyle(
                                             getActivity(), R.raw.map));
+
+                            Polyline line = googleMap.addPolyline(new PolylineOptions()
+                                    .add(sydney, new LatLng(mlat, mlang))
+                                    .width(10)
+                                    .color(Color.RED));
 
                             // For zooming automatically to the location of the marker
                             CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(17).build();
@@ -240,4 +272,38 @@ public class TowerFragment extends Fragment {
         });
         requestQueue.add(jsonObjectRequest);
     }
+    /*class MyOverlay extends Overlay {
+
+        public MyOverlay() {
+
+        }
+
+        public void draw(Canvas canvas, MapView mapv, boolean shadow) {
+            super.draw(canvas, mapv, shadow);
+
+            Paint mPaint = new Paint();
+            mPaint.setDither(true);
+            mPaint.setColor(Color.RED);
+            mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            mPaint.setStrokeJoin(Paint.Join.ROUND);
+            mPaint.setStrokeCap(Paint.Cap.ROUND);
+            mPaint.setStrokeWidth(2);
+
+            GeoPoint gP1 = new GeoPoint(19240000, -99120000);
+            GeoPoint gP2 = new GeoPoint(37423157, -122085008);
+
+            Point p1 = new Point();
+            Point p2 = new Point();
+            Path path = new Path();
+
+            Projection projection = mapv.getProjection();
+            projection.toPixels(gP1, p1);
+            projection.toPixels(gP2, p2);
+
+            path.moveTo(p2.x, p2.y);
+            path.lineTo(p1.x, p1.y);
+
+            canvas.drawPath(path, mPaint);
+        }
+    }*/
 }
