@@ -1,27 +1,40 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp"
     android:orientation="vertical"
     android:background="#000000"
     tools:context="prabhu.company.echo18beta.CoverageFragment">
 
-    <TextView
-        android:text="Coverage"
-        android:textSize="40sp"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/coverageMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <TextView
-        android:textSize="16sp"
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="22dp"
+        android:text="Coverage"
         android:textColor="#FFFFFF"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textView3"
+        android:layout_below="@+id/textView3"
+        android:layout_marginStart="43dp"
         android:fontFamily="sans-serif-light"
         android:text="Blah Blah :)"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
 
-</LinearLayout>
+</RelativeLayout>

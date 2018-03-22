@@ -1,8 +1,8 @@
 package prabhu.company.echo18beta;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.res.Resources;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -64,7 +64,7 @@ import prabhu.company.echo18beta.misc.CellMain;
 
 public class TowerFragment extends Fragment {
 
-    ProgressDialog progress;
+    //ProgressDialog progress;
 
     public TowerFragment() {
     }
@@ -88,11 +88,11 @@ public class TowerFragment extends Fragment {
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_PHONE_STATE)
                 != PackageManager.PERMISSION_GRANTED) ;
 
-        progress = new ProgressDialog(getActivity());
-        progress.setMessage("Loading map...");
-        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progress.setIndeterminate(true);
-        progress.show();
+//        progress = new ProgressDialog(getActivity());
+//        progress.setMessage("Loading map...");
+//        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//        progress.setIndeterminate(true);
+//        progress.show();
 
         TelephonyManager Tel = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
         GsmCellLocation cellLocation = (GsmCellLocation) Tel.getCellLocation();
@@ -118,7 +118,7 @@ public class TowerFragment extends Fragment {
             displayInMap();
         } else {
             Toast.makeText(getActivity(), "No signal", Toast.LENGTH_SHORT).show();
-            progress.dismiss();
+            //progress.dismiss();
         }
         return rootView;
     }
@@ -154,6 +154,7 @@ public class TowerFragment extends Fragment {
     double mlat=0,mlang=0;
     String tokens[]={"9226357cb8dac2","96983ae6ba78d0","904d9acad7f279"};
 
+    @SuppressLint("MissingPermission")
     public void displayInMap() {
         Random rand=new Random();
 
@@ -218,6 +219,9 @@ public class TowerFragment extends Fragment {
                         @Override
                         public void onMapReady(GoogleMap mMap) {
                             googleMap = mMap;
+                            googleMap.setMapStyle(
+                                    MapStyleOptions.loadRawResourceStyle(
+                                            getActivity(), R.raw.map));
 
                             // For showing a move to my location button
                             if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_PHONE_STATE)
@@ -232,7 +236,7 @@ public class TowerFragment extends Fragment {
 
                             int height = 100;
                             int width = 100;
-                            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.tower);
+                            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.signaltower);
                             Bitmap b = bitmapdraw.getBitmap();
 
                             Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
@@ -243,9 +247,7 @@ public class TowerFragment extends Fragment {
                             marker.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                             googleMap.addMarker(marker);
 
-                            googleMap.setMapStyle(
-                                    MapStyleOptions.loadRawResourceStyle(
-                                            getActivity(), R.raw.map));
+
 
                             Polyline line = googleMap.addPolyline(new PolylineOptions()
                                     .add(sydney, new LatLng(mlat, mlang))
@@ -257,10 +259,11 @@ public class TowerFragment extends Fragment {
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                         }
                     });
-                    progress.dismiss();
+                    //progress.dismiss();
 
                 } catch (Exception e) {
                     Toast.makeText(getActivity(),"Error retrieving data",Toast.LENGTH_SHORT).show();
+                    Log.e("err",e.toString());
                 }
                Log.e("Volley:Response ", "" + response.toString());
             }
