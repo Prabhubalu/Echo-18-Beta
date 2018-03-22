@@ -112,6 +112,7 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
 
+
         NetworkType = view.findViewById(R.id.type);
         Dbm = view.findViewById(R.id.dbm);
         Asu = view.findViewById(R.id.asu);
@@ -279,19 +280,19 @@ public class HomeFragment extends Fragment {
                         symbol.setImageDrawable(getResources().getDrawable(R.drawable.correct));
                         feedback.setText("GOOD");
                         circularFillableLoaders.setProgress(20);
-                        circularFillableLoaders.setColor(Color.parseColor("#38971A"));
+                        circularFillableLoaders.setColor(Color.parseColor("#68CB27"));
                     }
                     if (signalStrengthDbm >= -110 && signalStrengthDbm <= -101) {
                         symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));
                         feedback.setText("  AVG");
                         circularFillableLoaders.setProgress(30);
-                        circularFillableLoaders.setColor(Color.parseColor("#F96622"));
+                        circularFillableLoaders.setColor(Color.parseColor("#FA9628"));
                     }
                     if (signalStrengthDbm >= -120 && signalStrengthDbm <= -111) {
                         symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));
                         feedback.setText("  AVG");
                         circularFillableLoaders.setProgress(45);
-                        circularFillableLoaders.setColor(Color.parseColor("#FA9628"));
+                        circularFillableLoaders.setColor(Color.parseColor("#F96622 "));
                     }
                     if (signalStrengthDbm >= -130 && signalStrengthDbm <= -121) {
                         symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));

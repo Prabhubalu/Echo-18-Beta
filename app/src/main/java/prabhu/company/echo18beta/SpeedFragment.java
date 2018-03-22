@@ -98,7 +98,7 @@ public class SpeedFragment extends Fragment {
                         @Override
                         public void run() {
 
-                            speedometer.setSpeedAt(myspeed/102400);
+                            speedometer.setSpeedAt(myspeed/1024000);
                             speedometer.stop();
                         }
                     });
@@ -125,7 +125,7 @@ public class SpeedFragment extends Fragment {
                             public void run() {
                                 Log.v("GGGTYT", String.valueOf(myspeed / 10000));
 
-                                speedometer.speedTo(myspeed / 102400, 1000);
+                                speedometer.speedTo(myspeed / 1024000, 1000);
 
 
                             }

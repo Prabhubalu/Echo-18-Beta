@@ -53,6 +53,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.json.JSONArray;
@@ -259,14 +260,26 @@ public class CoverageFragment extends Fragment {
                                 Log.e("DANCCEMAMU","FAILMAMU"+e.toString());
                             }
 
+
+                            int[] colors = {
+                                    Color.rgb(102, 225, 0), // green
+                                    Color.rgb(255, 0, 0)    // red
+                            };
+
+                            float[] startPoints = {
+                                    0.2f, 1f
+                            };
+
+                            Gradient gradient = new Gradient(colors, startPoints);
+
+// Create the tile provider.
                             // Create a heat map tile provider, passing it the latlngs of the police stations.
                             HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
                                     .data(list)
+                                    .gradient(gradient)
                                     .build();
                             // Add a tile overlay to the map, using the heat map tile provider.
                             mOverlay = googleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-
-
 
 
 //                            Polyline line = googleMap.addPolyline(new PolylineOptions()
