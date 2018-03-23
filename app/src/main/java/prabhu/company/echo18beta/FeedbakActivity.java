@@ -15,7 +15,7 @@ public class FeedbakActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedbak);
-        textView.findViewById(R.id.question);
+        textView=findViewById(R.id.question2);
         if (count == 0) {
             textView.setText("Rate your signal");
             RadioGroup group = new RadioGroup(this);

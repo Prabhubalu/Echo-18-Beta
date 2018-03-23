@@ -319,7 +319,7 @@ public class HomeFragment extends Fragment {
                         symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));
                         feedback.setText("  AVG");
                         circularFillableLoaders.setProgress(45);
-                        circularFillableLoaders.setColor(Color.parseColor("#F96622 "));
+                        circularFillableLoaders.setColor(Color.parseColor("#F96622"));
                     }
                     if (signalStrengthDbm >= -130 && signalStrengthDbm <= -121) {
                         symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));
