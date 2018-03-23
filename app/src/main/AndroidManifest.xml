@@ -44,8 +44,6 @@
             android:name=".Libraries.BGService"
             android:enabled="true" />
 
-
-
         <receiver
             android:name=".Libraries.SensorRestarterBroadcastReceiver"
             android:enabled="true"
@@ -55,6 +53,8 @@
                 <action android:name="uk.ac.shef.oak.ActivityRecognition.RestartSensor" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".FeedbakActivity"></activity>
     </application>
 
 </manifest>

@@ -23,10 +23,12 @@ import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,6 +101,7 @@ public class HomeFragment extends Fragment {
     TextView type, feedback;
     CircularFillableLoaders circularFillableLoaders;
     ImageView symbol;
+    Button popupButton;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -109,8 +112,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-
+        final View view = inflater.inflate(R.layout.fragment_home, container, false);
 
 
         NetworkType = view.findViewById(R.id.type);
@@ -120,12 +122,37 @@ public class HomeFragment extends Fragment {
         circularFillableLoaders = view.findViewById(R.id.circularFillableLoaders);
         symbol = view.findViewById(R.id.symbol);
         feedback = view.findViewById(R.id.feedback);
+        popupButton = view.findViewById(R.id.popup);
+
+        popupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(getActivity(), popupButton);
+                popup.getMenuInflater().inflate(R.menu.top_menu, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getTitle().toString()) {
+                            case "Share..":
+                                break;
+                            case "My Connections":
+                                break;
+                            case "Feedback":
+                                Intent intent = new Intent(getActivity(), FeedbakActivity.class);
+                                startActivity(intent);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                popup.show();
+            }
+        });
+
 
         messageMap = new HashMap();
         prefs = getActivity().getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
         editor = prefs.edit();
-
-
         all = true;
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         fusedLocationProviderClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
@@ -197,7 +224,7 @@ public class HomeFragment extends Fragment {
 
                 TextView Carriertxt = (TextView) getActivity().findViewById(R.id.carrier);
 
-                String tempText = carrierName.substring(0,1).toUpperCase()+carrierName.substring(1);
+                String tempText = carrierName.substring(0, 1).toUpperCase() + carrierName.substring(1);
                 Carriertxt.setText(tempText);
 
                 List<CellInfo> cellInfoList = Tel.getAllCellInfo();
