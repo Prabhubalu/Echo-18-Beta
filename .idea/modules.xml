@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Echo-18-Beta.iml" filepath="$PROJECT_DIR$/Echo-18-Beta.iml" />
-      <module fileurl="file://C:\Users\shrey\Desktop\Echo-18-Beta\Echo18Beta.iml" filepath="C:\Users\shrey\Desktop\Echo-18-Beta\Echo18Beta.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Echo-18-Beta.iml" filepath="$PROJECT_DIR$/.idea/Echo-18-Beta.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

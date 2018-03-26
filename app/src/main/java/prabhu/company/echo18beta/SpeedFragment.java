@@ -95,14 +95,18 @@ public class SpeedFragment extends Fragment {
                     String myspeed2=String.valueOf(report.getTransferRateBit());
                     myspeed=Float.valueOf(myspeed2);
 
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                    try {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                            speedometer.setSpeedAt(myspeed/1024000);
-                            speedometer.stop();
-                        }
-                    });
+                                Log.e("speedtest", String.valueOf(myspeed / 10000));
+                                speedometer.setSpeedAt(myspeed / 10240);
+                                speedometer.stop();
+                            }
+                        });
+                    }
+                    catch (Exception ignore){}
                 }
 
                 @Override
@@ -126,7 +130,7 @@ public class SpeedFragment extends Fragment {
                             public void run() {
                                 Log.v("GGGTYT", String.valueOf(myspeed / 10000));
 
-                                speedometer.speedTo(myspeed / 1024000, 1000);
+                                speedometer.speedTo(myspeed / 10000, 1000);
 
 
                             }
@@ -137,7 +141,7 @@ public class SpeedFragment extends Fragment {
                 }
             });
 
-            speedTestSocket.startDownload("http://ipv4.ikoula.testdebit.info/5M.iso");
+            speedTestSocket.startDownload("http://ipv4.ikoula.testdebit.info/1M.iso");
 
 
             return null;
