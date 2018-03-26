@@ -24,6 +24,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.GeolocationPermissions;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -61,6 +66,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -71,8 +77,33 @@ import prabhu.company.echo18beta.misc.CellMain;
 
 public class CoverageFragment extends Fragment {
 
-    //ProgressDialog progress;
+    public WebView mWebView;
+    public String url = "https://ranjanbalappa.github.io/SIH2018/";
+    //public String url = "https://www.google.com/";
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
+        View v=inflater.inflate(R.layout.fragment_coverage, container, false);
+        mWebView = v.findViewById(R.id.webview);
+        mWebView.loadUrl(url);
+        // Enable Javascript
+        WebSettings webSettings = mWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setGeolocationEnabled(true);
+        webSettings.setAppCacheEnabled(true);
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        mWebView.setWebChromeClient(new WebChromeClient() {
+            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+                callback.invoke(origin, true, false);
+            }
+        });
+        mWebView.getSettings().setGeolocationDatabasePath(getContext().getDatabasePath("Geo-Locations").getAbsolutePath());
+        return v;
+    }
+
+    //ProgressDialog progress;
+/*
     public CoverageFragment() {
     }
 
@@ -323,4 +354,5 @@ public class CoverageFragment extends Fragment {
         }
         return list;
     }
+    */
 }
