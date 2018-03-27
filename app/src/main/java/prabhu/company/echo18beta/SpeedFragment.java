@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.github.anastr.speedviewlib.PointerSpeedometer;
 import com.google.android.gms.location.LocationServices;
@@ -49,13 +50,13 @@ import fr.bmartel.speedtest.model.SpeedTestError;
 public class SpeedFragment extends Fragment {
 
     PointerSpeedometer speedometer;
+    TextView setView;
 
     public SpeedFragment() {
-        // Required empty public constructor
     }
+
     float myspeed = 0.0f;
     Button speedbutton;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -63,19 +64,19 @@ public class SpeedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_speed, container, false);
         speedbutton = view.findViewById(R.id.speedbutton);
         speedometer = view.findViewById(R.id.meter);
+        setView = view.findViewById(R.id.speed3);
         speedbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new SpeedTestTask().execute();
-
-                //speedometer.setSpeedAt(myspeed/1024);
             }
         });
         return view;
     }
+
     class SpeedTestTask extends AsyncTask<Void, Void, String> {
 
-        public SpeedTestTask(){
+        public SpeedTestTask() {
 
         }
 
@@ -83,30 +84,29 @@ public class SpeedFragment extends Fragment {
         protected String doInBackground(Void... params) {
 
             SpeedTestSocket speedTestSocket = new SpeedTestSocket();
-
-            // add a listener to wait for speedtest completion and progress
             speedTestSocket.addSpeedTestListener(new ISpeedTestListener() {
 
                 @Override
                 public void onCompletion(SpeedTestReport report) {
                     // called when download/upload is finished
                     Log.v("speedtest", "[COMPLETED] rate in octet/s : " + report.getTransferRateOctet());
-                    Log.v("speedtest", "[COMPLETED] rate in bit/s   : " + report.getTransferRateBit());
-                    String myspeed2=String.valueOf(report.getTransferRateBit());
-                    myspeed=Float.valueOf(myspeed2);
+                    Log.e("speedtest", "[COMPLETED] rate in bit/s   : " + report.getTransferRateBit());
+                    String myspeed2 = String.valueOf(report.getTransferRateBit());
+                    myspeed = Float.valueOf(myspeed2);
 
+                    //speedometer.speedTo(myspeed);
                     try {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
-                                Log.e("speedtest", String.valueOf(myspeed / 10000));
-                                speedometer.setSpeedAt(myspeed / 10240);
+                                speedometer.setTrembleDegree(0);
+                                speedometer.speedTo(0);
                                 speedometer.stop();
+                                setView.setText(String.valueOf(myspeed / 1048576));
                             }
                         });
+                    } catch (Exception ignore) {
                     }
-                    catch (Exception ignore){}
                 }
 
                 @Override
@@ -119,37 +119,29 @@ public class SpeedFragment extends Fragment {
                     // called to notify download/upload progress
                     Log.v("speedtest", "[PROGRESS] progress : " + percent + "%");
                     Log.v("speedtest", "[PROGRESS] rate in octet/s : " + report.getTransferRateOctet());
-                    Log.v("speedtest", "[PROGRESS] rate in bit/s   : " + report.getTransferRateBit());
-                    String myspeed2=String.valueOf(report.getTransferRateBit());
-                    myspeed=Float.valueOf(myspeed2);
-                    //setSpeed();
+                    Log.e("speedtest", "[PROGRESS] rate in bit/s   : " + report.getTransferRateBit());
+                    String myspeed2 = String.valueOf(report.getTransferRateBit());
+                    myspeed = Float.valueOf(myspeed2);
 
                     try {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.v("GGGTYT", String.valueOf(myspeed / 10000));
 
-                                speedometer.speedTo(myspeed / 10000, 1000);
+                                speedometer.setTrembleDegree(5);
+                                speedometer.speedTo(myspeed / 1048576);
 
 
                             }
                         });
+                    } catch (Exception ignore) {
                     }
-                    catch (Exception ignore){}
 
                 }
             });
 
             speedTestSocket.startDownload("http://ipv4.ikoula.testdebit.info/1M.iso");
-
-
             return null;
         }
-    }
-
-    void setSpeed()
-    {
-
     }
 }

@@ -78,7 +78,7 @@ import prabhu.company.echo18beta.misc.CellMain;
 public class CoverageFragment extends Fragment {
 
     public WebView mWebView;
-    public String url = "https://ranjanbalappa.github.io/SIH2018/";
+    public String url = "https://10.0.0.236:8080";
     //public String url = "https://www.google.com/";
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
