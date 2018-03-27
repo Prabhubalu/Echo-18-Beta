@@ -19,13 +19,13 @@ import java.util.Map;
 public class ServiceReceiver extends BroadcastReceiver {
     TelephonyManager telephony;
     @Override
-    public void onReceive(final Context context, Intent intent) {a
+    public void onReceive(final Context context, Intent intent) {
         telephony = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
         telephony.listen(new PhoneStateListener(){
             @Override
             public void onCallStateChanged(int state, String incomingNumber) {
                 super.onCallStateChanged(state, incomingNumber);
-                Log.e("hellothere", "RINGING, number: " + incomingNumber);
+                Log.e("PHONEService", "RINGING, number: " + incomingNumber);
                 Map callMap = new HashMap();
                 callMap.put("Time", ServerValue.TIMESTAMP);
                 callMap.put("Device",telephony.getDeviceId());

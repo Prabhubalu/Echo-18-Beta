@@ -300,7 +300,7 @@ public class BGService extends Service {
 
                                 try {
                                     //Thread.sleep(20000);
-                                    Log.i("TAGGYBOY","ENDED IN SUCC??");
+                                    Log.i("TAGGYBOY","ENDED IN SUCCESS");
                                 }
                                 catch (Exception e)
                                 {
@@ -313,7 +313,7 @@ public class BGService extends Service {
                     }
                     catch (Exception e)
                     {
-                        Log.e("OOPY",e.toString());
+                        Log.e("BGError",e.toString());
                     }
                 }
             }

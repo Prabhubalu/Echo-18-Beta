@@ -1,23 +1,10 @@
 package prabhu.company.echo18beta;
 
 
-import android.*;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.telephony.CellInfo;
-import android.telephony.CellInfoLte;
-import android.telephony.PhoneStateListener;
-import android.telephony.SignalStrength;
-import android.telephony.gsm.GsmCellLocation;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,17 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.anastr.speedviewlib.PointerSpeedometer;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.concurrent.TimeUnit;
 
 import fr.bmartel.speedtest.SpeedTestReport;
 import fr.bmartel.speedtest.SpeedTestSocket;
