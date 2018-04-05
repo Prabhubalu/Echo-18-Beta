@@ -87,8 +87,14 @@ public class TowerFragment extends Fragment {
 //        progress.show();
 
         TelephonyManager Tel = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
-        GsmCellLocation cellLocation = (GsmCellLocation) Tel.getCellLocation();
-        String networkOperator = Tel.getNetworkOperator();
+        GsmCellLocation cellLocation = null;
+        if (Tel != null) {
+            cellLocation = (GsmCellLocation) Tel.getCellLocation();
+        }
+        String networkOperator = null;
+        if (Tel != null) {
+            networkOperator = Tel.getNetworkOperator();
+        }
         if (!TextUtils.isEmpty(networkOperator)) {
             carriercid = cellLocation.getCid();
             carrierlang = cellLocation.getLac() & 0xffff;
@@ -96,7 +102,7 @@ public class TowerFragment extends Fragment {
             mnc = Integer.parseInt(networkOperator.substring(3));
 
 
-            mMapView = (MapView) rootView.findViewById(R.id.mapView);
+            mMapView = rootView.findViewById(R.id.mapView);
             mMapView.onCreate(savedInstanceState);
 
             mMapView.onResume(); // needed to get the map to display immediately
@@ -141,17 +147,17 @@ public class TowerFragment extends Fragment {
 
     double lat, longi;
 
-    private FusedLocationProviderClient fusedLocationProviderClient;
     JSONObject jo2;
     double mlat=0,mlang=0;
     String tokens[]={"9226357cb8dac2","96983ae6ba78d0","904d9acad7f279"};
+
 
     @SuppressLint("MissingPermission")
     public void displayInMap() {
         Random rand=new Random();
 
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
@@ -204,7 +210,11 @@ public class TowerFragment extends Fragment {
                     }
                     lat = response.getDouble("lat");
                     longi = response.getDouble("lon");
+
+
+
                     String address = response.getString("address");
+                    Log.e("Address",address);
 
 
                     mMapView.getMapAsync(new OnMapReadyCallback() {
@@ -239,16 +249,15 @@ public class TowerFragment extends Fragment {
                             marker.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                             googleMap.addMarker(marker);
 
+                            // For zooming automatically to the location of the marker
+                            CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(17).build();
+                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-
-                            Polyline line = googleMap.addPolyline(new PolylineOptions()
+                            googleMap.addPolyline(new PolylineOptions()
                                     .add(sydney, new LatLng(mlat, mlang))
                                     .width(10)
                                     .color(Color.RED));
 
-                            // For zooming automatically to the location of the marker
-                            CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(17).build();
-                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                         }
                     });
                     //progress.dismiss();
@@ -262,43 +271,9 @@ public class TowerFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Volley:ERROR ", error.getMessage().toString());
+                Log.e("Volley:ERROR ", error.getMessage());
             }
         });
         requestQueue.add(jsonObjectRequest);
     }
-    /*class MyOverlay extends Overlay {
-
-        public MyOverlay() {
-
-        }
-
-        public void draw(Canvas canvas, MapView mapv, boolean shadow) {
-            super.draw(canvas, mapv, shadow);
-
-            Paint mPaint = new Paint();
-            mPaint.setDither(true);
-            mPaint.setColor(Color.RED);
-            mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-            mPaint.setStrokeJoin(Paint.Join.ROUND);
-            mPaint.setStrokeCap(Paint.Cap.ROUND);
-            mPaint.setStrokeWidth(2);
-
-            GeoPoint gP1 = new GeoPoint(19240000, -99120000);
-            GeoPoint gP2 = new GeoPoint(37423157, -122085008);
-
-            Point p1 = new Point();
-            Point p2 = new Point();
-            Path path = new Path();
-
-            Projection projection = mapv.getProjection();
-            projection.toPixels(gP1, p1);
-            projection.toPixels(gP2, p2);
-
-            path.moveTo(p2.x, p2.y);
-            path.lineTo(p1.x, p1.y);
-
-            canvas.drawPath(path, mPaint);
-        }
-    }*/
 }

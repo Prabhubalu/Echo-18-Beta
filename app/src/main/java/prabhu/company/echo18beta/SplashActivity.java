@@ -18,9 +18,6 @@ import com.daimajia.androidanimations.library.YoYo;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private LottieAnimationView lottieAnimationView;
-    private LinearLayout splashLinearLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,8 +58,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void initialiseViews() {
-        lottieAnimationView = findViewById(R.id.splashLotteAnimationView);
-        splashLinearLayout = findViewById(R.id.splashMainLinearLayout);
+        LottieAnimationView lottieAnimationView = findViewById(R.id.splashLotteAnimationView);
+        LinearLayout splashLinearLayout = findViewById(R.id.splashMainLinearLayout);
 
         YoYo.with(Techniques.Landing)
                 .duration(500)

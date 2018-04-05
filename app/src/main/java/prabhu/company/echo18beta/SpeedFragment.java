@@ -16,6 +16,7 @@ import com.github.anastr.speedviewlib.PointerSpeedometer;
 
 import fr.bmartel.speedtest.SpeedTestReport;
 import fr.bmartel.speedtest.SpeedTestSocket;
+import fr.bmartel.speedtest.SpeedTestTask;
 import fr.bmartel.speedtest.inter.ISpeedTestListener;
 import fr.bmartel.speedtest.model.SpeedTestError;
 
@@ -116,7 +117,9 @@ public class SpeedFragment extends Fragment {
                 }
             });
 
-            speedTestSocket.startDownload("http://ipv4.ikoula.testdebit.info/1M.iso");
+            speedTestSocket.startDownload("http://mirror.internode.on.net/pub/speed/SpeedTest_64MB.dat");
+//            speedTestSocket.startDownload("http://ipv4.ikoula.testdebit.info/1M.iso");
+
             return null;
         }
     }

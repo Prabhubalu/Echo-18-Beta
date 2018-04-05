@@ -1,41 +1,59 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#000000"
-    tools:context="prabhu.company.echo18beta.CoverageFragment">
-
-    <WebView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </WebView>
+    tools:context="prabhu.company.echo18beta.FeedbakActivity"
+    android:background="#000000">
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="22dp"
-        android:text="Coverage"
-        android:textColor="#FFFFFF"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="25dp"
         android:textSize="40sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/textView2"
+        android:textColor="@color/space_white"
+        android:id="@+id/question2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView3"
-        android:layout_below="@+id/textView3"
-        android:layout_marginStart="43dp"
-        android:fontFamily="sans-serif-light"
-        android:text="Blah Blah :)"
+        android:text="Feedback"
+        tools:layout_editor_absoluteX="37dp"
+        tools:layout_editor_absoluteY="31dp" />
+    <TextView
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="25dp"
+        android:textSize="16sp"
         android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:fontFamily="sans-serif-light"
+        android:text="Give feedback in any form you like!"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-</RelativeLayout>
+    <me.zhanghai.android.materialratingbar.MaterialRatingBar
+        android:id="@+id/ratingbar"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialRatingBar.RatingBar" />
+    <EditText
+        android:id="@+id/editText"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:hint="Type your feedback here"
+        android:textColor="@color/space_white"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"/>
+    <Button
+        android:id="@+id/submitbutton"
+        android:layout_marginTop="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Submit"
+        android:textColor="@color/colorPrimary"
+        android:background="@drawable/button_background"/>
+</LinearLayout>

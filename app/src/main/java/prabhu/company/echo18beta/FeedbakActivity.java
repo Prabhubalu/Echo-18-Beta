@@ -1,45 +1,48 @@
 package prabhu.company.echo18beta;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
+import android.telephony.TelephonyManager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RatingBar;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FeedbakActivity extends AppCompatActivity {
 
-    int count = 0;
-    TextView textView;
+    RatingBar ratingBar;
+    EditText editText;
+    Button button;
+    String rating, feedback;
+    DatabaseReference mdatabase;
+    TelephonyManager tel;
+    public String carrier, lattitude, longitude, id;
+    double latt, longg;
+    FusedLocationProviderClient fl;
+    Map hashmap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedbak);
-        textView=findViewById(R.id.question2);
-        if (count == 0) {
-            textView.setText("Rate your signal");
-            RadioGroup group = new RadioGroup(this);
-            RadioButton[] rb = new RadioButton[4];
 
-            rb[0] = new RadioButton(this);
-            rb[0].setText("Exellent");
-            rb[0].setId(0 + 100);
-            group.addView(rb[0]);
 
-            rb[1] = new RadioButton(this);
-            rb[1].setText("Good");
-            rb[1].setId(1 + 100);
-            group.addView(rb[1]);
-
-            rb[2] = new RadioButton(this);
-            rb[2].setText("Average");
-            rb[2].setId(2 + 100);
-            group.addView(rb[2]);
-
-            rb[3] = new RadioButton(this);
-            rb[3].setText("Poor");
-            rb[3].setId(3 + 100);
-            group.addView(rb[3]);
-        }
     }
+
+
+
 }

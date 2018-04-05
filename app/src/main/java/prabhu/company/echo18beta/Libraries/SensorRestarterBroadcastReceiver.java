@@ -1,9 +1,5 @@
 package prabhu.company.echo18beta.Libraries;
 
-/**♦
- * Created by shrey on 20-03-2018.
- */
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

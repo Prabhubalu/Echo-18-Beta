@@ -1,10 +1,13 @@
 package prabhu.company.echo18beta.Libraries;
+
 import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -21,6 +24,9 @@ import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
 import android.util.Log;
 
+import prabhu.company.echo18beta.MainActivity;
+import prabhu.company.echo18beta.TowerFragment;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,12 +34,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import fr.bmartel.speedtest.SpeedTestReport;
 import fr.bmartel.speedtest.SpeedTestSocket;
@@ -42,19 +52,18 @@ import fr.bmartel.speedtest.model.SpeedTestError;
 
 
 public class BGService extends Service {
-    public int counter = 0,counter2=0;
+    public int counter = 0, counter2 = 0;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    String carrierConnenctionType="";
-    int mSignalStrength=0;
+    String carrierConnenctionType = "";
+    int mSignalStrength = 0;
     String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_SMS, Manifest.permission.INTERNET};
-    TelephonyManager Tel,telephonyManager;
+    TelephonyManager Tel, telephonyManager;
     //    PhoneCustomStateListener2 MyListener;
-    String carrierName="",carrierNetwork="";
-    int carrierlang=0,carrierlong=0,carriercid=0,mcc=0,mnc=0;
-    double mlat=0,mlang=0,malt=0,mspeed=0;
-    boolean all=false,run=true,timerover=false;
+    String carrierName = "", carrierNetwork = "";
+    int carrierlang = 0, carrierlong = 0, carriercid = 0, mcc = 0, mnc = 0;
+    double mlat = 0, mlang = 0, malt = 0, mspeed = 0;
+    boolean all = false, run = true, timerover = false;
     SharedPreferences prefs;
-
 
 
     public BGService(Context applicationContext) {
@@ -76,21 +85,22 @@ public class BGService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i("EXIT", "ondestroy!");
-        Intent broadcastIntent = new Intent(getApplicationContext(),SensorRestarterBroadcastReceiver.class);
+        Intent broadcastIntent = new Intent(getApplicationContext(), SensorRestarterBroadcastReceiver.class);
         sendBroadcast(broadcastIntent);
         stoptimertask();
     }
 
-    boolean test=false;
+    boolean test = false;
     private Timer timer;
     private TimerTask timerTask;
     long oldTime = 0;
-    int period=20000;
+    int period = 20000;
+
     public void startTimer() {
 
-        prefs= getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
+        prefs = getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
         //  int period = prefs.getInt("runtime",10*60000);
-        period = prefs.getInt("runtime",60000);
+        period = prefs.getInt("runtime", 60000);
 
         //set a new Timer
         timer = new Timer();
@@ -106,44 +116,40 @@ public class BGService extends Service {
 
     public int signalStrengthDbm = INVALID;
     public int signalStrengthAsuLevel = INVALID;
-    Float myspeed=null;
+    Float myspeed = null;
 
     public int signalSupport = 0, signalStrengthValue = 0;
-    int where=0;
-
+    int where = 0;
 
     public void initializeTimerTask() {
-        prefs= getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
+        prefs = getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
 
-
-        if(!test)
+        if (!test)
             new SpeedTestTask().execute();
 
         timerTask = new TimerTask() {
             public void run() {
-                period = prefs.getInt("runtime",60000);
+                period = prefs.getInt("runtime", 5000);
 
                 //period=10000;
-                Log.e("Counter","---> "+(counter++));
+                Log.e("Counter", "---> " + (counter++));
 
 
-                if(counter%30==0&&!test)
+                if (counter % 30 == 0 && !test)
                     new SpeedTestTask().execute();
 
-                SharedPreferences prefs= getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
-                run = prefs.getBoolean("run",true);
-                timerover=false;
+                SharedPreferences prefs = getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
+                run = prefs.getBoolean("run", true);
+                timerover = false;
 
                 if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE)
                         != PackageManager.PERMISSION_GRANTED
                         || ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                         || ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                         ) {
-                }
-                else if(!run) {
-                    stopService(new Intent(getApplicationContext(),BGService.class));
-                }
-                else{
+                } else if (!run) {
+                    stopService(new Intent(getApplicationContext(), BGService.class));
+                } else {
                     try {
 
                         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
@@ -171,11 +177,11 @@ public class BGService extends Service {
                                     public void onSignalStrengthsChanged(SignalStrength signalStrength) {
                                         super.onSignalStrengthsChanged(signalStrength);
 
-                                        Log.i("In timer","Running!!");
+                                        Log.i("In timer", "Running!!");
 
                                         //Speedtest
                                         //Test implementation
-                                        if(!timerover) {
+                                        if (!timerover) {
 
 
                                             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE)
@@ -245,24 +251,44 @@ public class BGService extends Service {
                                                 }
                                             });
 
-                                            long millis =System.currentTimeMillis();
+
+                                            long millis = System.currentTimeMillis();
                                             String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
                                                     TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                                                     TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
 
 
-                                            messageMap.put("DeviceTime",hms);
+                                            messageMap.put("DeviceTime", hms);
                                             try {
                                                 messageMap.put("speed", myspeed);
-                                                messageMap.put("speedinKBps", String.valueOf(Math.ceil(myspeed / 10000)));
-                                            }
-                                            catch (Exception e)
-                                            {
+                                                messageMap.put("speedinKBps", String.valueOf(Math.ceil(myspeed / 1048576)));
+                                            } catch (Exception e) {
                                                 //eror
                                             }
 
+                                            Calendar calendar = Calendar.getInstance();
+                                            SimpleDateFormat mdformat = new SimpleDateFormat("dd-MM-yyyy");
+                                            String strDate = "Current Date : " + mdformat.format(calendar.getTime());
+
                                             DatabaseReference firepush = FirebaseDatabase.getInstance().getReference().child("Carrier").child(carrierName).child(carrierNetwork);
-                                            String push_id2= firepush.push().getKey();
+                                            String push_id2 = firepush.push().getKey();
+
+//                                            Geocoder geocoder = new Geocoder(getBaseContext(),Locale.ENGLISH);
+//                                            List<Address> addresses = null;
+//                                            try {
+//                                                addresses = geocoder.getFromLocation(mlat, mlang, 1);
+//                                            } catch (IOException e) {
+//                                                e.printStackTrace();
+//                                            }
+
+                                            // String city = addresses.get(0).getLocality();
+
+                                            //String state = addresses.get(0).getAdminArea();
+
+                                            //  String country = addresses.get(0).getCountryName();
+
+                                            //String postalCode = addresses.get(0).getPostalCode();
+                                            //String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
 
 
                                             messageMap.put("Carrier", carrierName);
@@ -277,7 +303,10 @@ public class BGService extends Service {
                                             messageMap.put("MyLatitude", mlat);
                                             messageMap.put("MyLongitude", mlang);
                                             messageMap.put("Time", ServerValue.TIMESTAMP);
-                                            messageMap.put("Tester", "shravan");
+                                            messageMap.put("Date", strDate);
+                                            //messageMap.put("City", city);
+                                            // messageMap.put("State",state);
+                                            // Log.e("State n city",state);
                                             //messageMap.put("Timer", counter);
 
                                             DatabaseReference fireDB = FirebaseDatabase.getInstance().getReference().child("Signals");
@@ -285,35 +314,30 @@ public class BGService extends Service {
 
                                             firepush.child(push_id2).setValue(messageMap);
 
-                                            if(!test)
+                                            if (!test)
                                                 fireDB.child(push_id).setValue(messageMap);
-                                            Log.i("MY IN TIMER","Pushed man");
+                                            Log.i("MY IN TIMER", "Pushed man");
 
-                                            timerover=true;
+                                            timerover = true;
                                         }
 
                                     }
-
 
 
                                 }, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
                                 try {
                                     //Thread.sleep(20000);
-                                    Log.i("TAGGYBOY","ENDED IN SUCCESS");
-                                }
-                                catch (Exception e)
-                                {
-                                    Log.e("TAGGYBOY","ENDED IN FAILURE");
+                                    Log.i("TAGGYBOY", "ENDED IN SUCCESS");
+                                } catch (Exception e) {
+                                    Log.e("TAGGYBOY", "ENDED IN FAILURE");
                                 }
                                 Looper.loop();
 
                             }
                         }).start();
-                    }
-                    catch (Exception e)
-                    {
-                        Log.e("BGError",e.toString());
+                    } catch (Exception e) {
+                        Log.e("BGError", e.toString());
                     }
                 }
             }
@@ -336,60 +360,54 @@ public class BGService extends Service {
     }
 
 
-
-
-    private int getSignalStrengthByName(SignalStrength signalStrength, String methodName)
-    {
-        try
-        {
+    private int getSignalStrengthByName(SignalStrength signalStrength, String methodName) {
+        try {
             Class classFromName = Class.forName(SignalStrength.class.getName());
             java.lang.reflect.Method method = classFromName.getDeclaredMethod(methodName);
             Object object = method.invoke(signalStrength);
-            return (int)object;
-        }
-        catch (Exception ex)
-        {
+            return (int) object;
+        } catch (Exception ex) {
             return INVALID;
         }
     }
 
 
-    public String getNetworkClass(Context context) {
+    public String getNetworkClass(Context context) throws NullPointerException {
         TelephonyManager mTelephonyManager = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
         int networkType = mTelephonyManager.getNetworkType();
         switch (networkType) {
             case TelephonyManager.NETWORK_TYPE_GPRS:
-                carrierConnenctionType="GPRS";
+                carrierConnenctionType = "GPRS";
             case TelephonyManager.NETWORK_TYPE_EDGE:
-                carrierConnenctionType="EDGE";
+                carrierConnenctionType = "EDGE";
             case TelephonyManager.NETWORK_TYPE_CDMA:
-                carrierConnenctionType="CDMA";
+                carrierConnenctionType = "CDMA";
             case TelephonyManager.NETWORK_TYPE_1xRTT:
-                carrierConnenctionType="1xRTT";
+                carrierConnenctionType = "1xRTT";
             case TelephonyManager.NETWORK_TYPE_IDEN:
-                carrierConnenctionType="IDEN";
+                carrierConnenctionType = "IDEN";
                 return "2G";
             case TelephonyManager.NETWORK_TYPE_UMTS:
-                carrierConnenctionType="UMTS";
+                carrierConnenctionType = "UMTS";
             case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                carrierConnenctionType="EVDO";
+                carrierConnenctionType = "EVDO";
             case TelephonyManager.NETWORK_TYPE_EVDO_A:
             case TelephonyManager.NETWORK_TYPE_HSDPA:
-                carrierConnenctionType="HSDPA";
+                carrierConnenctionType = "HSDPA";
             case TelephonyManager.NETWORK_TYPE_HSUPA:
-                carrierConnenctionType="HSUPA";
+                carrierConnenctionType = "HSUPA";
             case TelephonyManager.NETWORK_TYPE_HSPA:
-                carrierConnenctionType="HSPA";
+                carrierConnenctionType = "HSPA";
             case TelephonyManager.NETWORK_TYPE_EVDO_B:
-                carrierConnenctionType="EVDO_B";
+                carrierConnenctionType = "EVDO_B";
             case TelephonyManager.NETWORK_TYPE_EHRPD:
-                carrierConnenctionType="EHRPD";
+                carrierConnenctionType = "EHRPD";
             case TelephonyManager.NETWORK_TYPE_HSPAP:
-                carrierConnenctionType="HSPAP";
+                carrierConnenctionType = "HSPAP";
                 return "3G";
             case TelephonyManager.NETWORK_TYPE_LTE:
-                carrierConnenctionType="LTE";
+                carrierConnenctionType = "LTE";
                 return "4G";
             default:
                 return "Unknown";
@@ -410,8 +428,8 @@ public class BGService extends Service {
                 public void onCompletion(SpeedTestReport report) {
                     // called when download/upload is finished
                     Log.v("speedtest", "[COMPLETED] rate in bit/s   : " + report.getTransferRateBit());
-                    String myspeed2=String.valueOf(report.getTransferRateBit());
-                    myspeed=Float.valueOf(myspeed2);
+                    String myspeed2 = String.valueOf(report.getTransferRateBit());
+                    myspeed = Float.valueOf(myspeed2);
                 }
 
                 @Override

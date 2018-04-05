@@ -55,6 +55,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.androidadvance.surveylib:surveylib:0.0.1'
 
+    compile 'me.zhanghai.android.materialratingbar:library:1.2.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

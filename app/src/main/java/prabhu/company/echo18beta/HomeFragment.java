@@ -11,6 +11,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.telephony.CellInfo;
 import android.telephony.CellInfoLte;
@@ -53,29 +54,23 @@ public class HomeFragment extends Fragment {
 
     public static final int INVALID = Integer.MAX_VALUE;
     Intent mServiceIntent;
-    private BGService mSensorService;
-    Context ctx;
-    private MaterialDialog materialDialog;
     public int signalStrengthDbm = INVALID;
     public int signalStrengthAsuLevel = INVALID;
     private FusedLocationProviderClient fusedLocationProviderClient;
     public TextView NetworkType, Dbm, Asu;
     String carrierConnenctionType = "";
-    //TextView currentSignalView;
-    //Button knowBtn;
-    int mSignalStrength = 0;
     String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_SMS, Manifest.permission.INTERNET};
     TelephonyManager Tel, telephonyManager;
     PhoneCustomStateListener MyListener;
     public String carrierName = "", carrierNetwork = "";
     int carrierlang = 0, carriercid = 0, mcc = 0, mnc = 0;
     double mlat = 0, mlang = 0, malt = 0, mspeed = 0;
-    SpeedView speedView;
     boolean all = false, run = true;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
     Map messageMap;
     TextView type, feedback;
+    TextView Carriertxt;
     CircularFillableLoaders circularFillableLoaders;
     ImageView symbol;
     Button popupButton;
@@ -86,7 +81,7 @@ public class HomeFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_home, container, false);
@@ -99,9 +94,9 @@ public class HomeFragment extends Fragment {
         circularFillableLoaders = view.findViewById(R.id.circularFillableLoaders);
         symbol = view.findViewById(R.id.symbol);
         feedback = view.findViewById(R.id.feedback);
-        popupButton = view.findViewById(R.id.popup);
+        //popupButton = view.findViewById(R.id.popup);
 
-        popupButton.setOnClickListener(new View.OnClickListener() {
+        /*popupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PopupMenu popup = new PopupMenu(getActivity(), popupButton);
@@ -124,30 +119,43 @@ public class HomeFragment extends Fragment {
                 });
                 popup.show();
             }
-        });
+        });*/
 
 
         messageMap = new HashMap();
-        prefs = getActivity().getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
+        try {
+            prefs = getActivity().getSharedPreferences("bs.inc.MyService", MODE_PRIVATE);
+        } catch (Exception e) {
+
+        }
         editor = prefs.edit();
         all = true;
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    mlat = location.getLatitude();
-                    mlang = location.getLongitude();
-                    malt = location.getAltitude();
-                    mspeed = location.getSpeed();
+        try {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        mlat = location.getLatitude();
+                        mlang = location.getLongitude();
+                        malt = location.getAltitude();
+                        mspeed = location.getSpeed();
+                    }
                 }
-            }
-        });
+            });
+        } catch (SecurityException e) {
+        }
+        catch (Exception e){
+        }
 
         MyListener = new PhoneCustomStateListener();
         Tel = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
-        carrierName = Tel.getNetworkOperatorName();
-        Tel.listen(MyListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        if (Tel != null) {
+            carrierName = Tel.getNetworkOperatorName();
+        }
+        if (Tel != null) {
+            Tel.listen(MyListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        }
 
 
         new Handler().postDelayed(new Runnable() {
@@ -160,7 +168,7 @@ public class HomeFragment extends Fragment {
         }, 1000);
 
 
-        mSensorService = new BGService(getActivity());
+        BGService mSensorService = new BGService(getActivity());
         mServiceIntent = new Intent(getActivity(), mSensorService.getClass());
         if (!isMyServiceRunning(mSensorService.getClass())) {
             editor.putBoolean("run", true);
@@ -177,13 +185,21 @@ public class HomeFragment extends Fragment {
 
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
+
+        try {
+            ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+            if (manager != null) {
+                for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                    if (serviceClass.getName().equals(service.service.getClassName())) {
+                        return true;
+                    }
+                }
             }
+        } catch (NullPointerException e) {
+
         }
         return false;
+
     }
 
 
@@ -197,9 +213,14 @@ public class HomeFragment extends Fragment {
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
             super.onSignalStrengthsChanged(signalStrength);
             try {
-                messageMap.put("deviceID", Tel.getDeviceId());
+                try{
+                    messageMap.put("deviceID", Tel.getDeviceId());
+                }
+                catch (SecurityException e){
 
-                TextView Carriertxt = (TextView) getActivity().findViewById(R.id.carrier);
+                }
+
+                Carriertxt = getActivity().findViewById(R.id.carrier);
 
                 String tempText = carrierName.substring(0, 1).toUpperCase() + carrierName.substring(1);
                 Carriertxt.setText(tempText);
@@ -312,6 +333,89 @@ public class HomeFragment extends Fragment {
                     }
                 }
 
+                if (carrierNetwork == "3G") {
+                    if (signalStrengthDbm >= -40 && signalStrengthDbm <= -30) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.correct));
+                        feedback.setText("GOOD");
+                        circularFillableLoaders.setProgress(0);
+                        circularFillableLoaders.setColor(Color.parseColor("#00C000"));
+                    }
+                    if (signalStrengthDbm >= -50 && signalStrengthDbm <= -41) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.correct));
+                        feedback.setText("GOOD");
+                        circularFillableLoaders.setProgress(10);
+                        circularFillableLoaders.setColor(Color.parseColor("#68CB27"));
+                    }
+                    if (signalStrengthDbm >= -80 && signalStrengthDbm <= -51) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.correct));
+                        feedback.setText("GOOD");
+                        circularFillableLoaders.setProgress(20);
+                        circularFillableLoaders.setColor(Color.parseColor("#68CB27"));
+                    }
+                    if (signalStrengthDbm >= -90 && signalStrengthDbm <= -81) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));
+                        feedback.setText("  AVG");
+                        circularFillableLoaders.setProgress(30);
+                        circularFillableLoaders.setColor(Color.parseColor("#FA9628"));
+                    }
+                    if (signalStrengthDbm >= -100 && signalStrengthDbm <= -91) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));
+                        feedback.setText("  AVG");
+                        circularFillableLoaders.setProgress(45);
+                        circularFillableLoaders.setColor(Color.parseColor("#F96622"));
+                    }
+                    if (signalStrengthDbm >= -110 && signalStrengthDbm <= -101) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));
+                        feedback.setText("  AVG");
+                        circularFillableLoaders.setProgress(70);
+                        circularFillableLoaders.setColor(Color.parseColor("#F9351E"));
+                    }
+                    if (signalStrengthDbm <= -111) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.wrong));
+                        feedback.setText("  BAD");
+                        circularFillableLoaders.setProgress(85);
+                        circularFillableLoaders.setColor(Color.parseColor("#CA0A16"));
+                    }
+                }
+                if (carrierNetwork == "2G") {
+                    if (signalStrengthDbm >= -40 && signalStrengthDbm <= -30) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.correct));
+                        feedback.setText("GOOD");
+                        circularFillableLoaders.setProgress(0);
+                        circularFillableLoaders.setColor(Color.parseColor("#00C000"));
+                    }
+                    if (signalStrengthDbm >= -50 && signalStrengthDbm <= -41) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.correct));
+                        feedback.setText("GOOD");
+                        circularFillableLoaders.setProgress(10);
+                        circularFillableLoaders.setColor(Color.parseColor("#68CB27"));
+                    }
+                    if (signalStrengthDbm >= -80 && signalStrengthDbm <= -51) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.correct));
+                        feedback.setText("GOOD");
+                        circularFillableLoaders.setProgress(20);
+                        circularFillableLoaders.setColor(Color.parseColor("#68CB27"));
+                    }
+                    if (signalStrengthDbm >= -90 && signalStrengthDbm <= -81) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));
+                        feedback.setText("  AVG");
+                        circularFillableLoaders.setProgress(30);
+                        circularFillableLoaders.setColor(Color.parseColor("#FA9628"));
+                    }
+                    if (signalStrengthDbm >= -100 && signalStrengthDbm <= -91) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));
+                        feedback.setText("  AVG");
+                        circularFillableLoaders.setProgress(45);
+                        circularFillableLoaders.setColor(Color.parseColor("#F96622"));
+                    }
+                    if (signalStrengthDbm <= -101) {
+                        symbol.setImageDrawable(getResources().getDrawable(R.drawable.poor));
+                        feedback.setText("  AVG");
+                        circularFillableLoaders.setProgress(70);
+                        circularFillableLoaders.setColor(Color.parseColor("#F9351E"));
+                    }
+                }
+
 
                 messageMap.put("Carrier", carrierName);
                 messageMap.put("DBM", signalStrengthDbm);
@@ -337,7 +441,7 @@ public class HomeFragment extends Fragment {
                 try {
 
                     Tel.listen(MyListener, PhoneStateListener.LISTEN_NONE);
-                } catch (Exception ignore) {
+                } catch (SecurityException e1) {
                 }
             }
         }
@@ -360,7 +464,10 @@ public class HomeFragment extends Fragment {
     public String getNetworkClass(Context context) {
         TelephonyManager mTelephonyManager = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
-        int networkType = mTelephonyManager.getNetworkType();
+        int networkType = 0;
+        if (mTelephonyManager != null) {
+            networkType = mTelephonyManager.getNetworkType();
+        }
         switch (networkType) {
             case TelephonyManager.NETWORK_TYPE_GPRS:
                 carrierConnenctionType = "GPRS";

@@ -17,7 +17,6 @@ import prabhu.company.echo18beta.Libraries.BGService;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SpaceNavigationView spaceNavigationView;
     private android.support.v4.app.FragmentManager fragmentManager;
 
     SharedPreferences prefs;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initialiseViews(Bundle savedInstanceState) {
-        spaceNavigationView = findViewById(R.id.mainSpaceNavigationView);
+        SpaceNavigationView spaceNavigationView = findViewById(R.id.mainSpaceNavigationView);
         fragmentManager = getSupportFragmentManager();
 
         fragmentManager.beginTransaction().replace(R.id.mainFrameLayout, new HomeFragment()).commit();
@@ -93,9 +92,11 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new SpeedFragment();
                 break;
             case 2:
+//                fragment = new TowerFragment();
                 fragment = new CoverageFragment();
                 break;
             default:
+                //fragment = new SpeedFragment();
                 fragment = new AnalyticsFragment();
                 break;
         }
